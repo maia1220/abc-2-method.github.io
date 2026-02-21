@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ABC/2 Hematoma Volume Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-7 mx-auto">
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">ABC/2 Hematoma Volume Calculator</h3>
+                    <h3 class="text-center mb-4">Especially for MINUTE Trial</h3>
+                    <h6 class="text-center mb-6">Reference: https://radiopaedia.org/articles/abc2?lang=us</h6>
+
+                    <form id="calculatorForm">
+
+                        <div class="mb-3">
+                            <label class="form-label">A (Length: Measure longest axis in cm)</label>
+                            <input type="number" step="0.01" class="form-control" id="aValue" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">B (Width: Measure longest axis at 90° to A in cm)</label>
+                            <input type="number" step="0.01" class="form-control" id="bValue" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Number of Slices with Hematoma Present</label>
+                            <input type="number" class="form-control" id="sliceCount">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Slice Thickness (cm)</label>
+                            <input type="number" step="0.01" class="form-control" id="sliceThickness" value="0.5">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">C (Auto-calculated)</label>
+                            <input type="number" step="0.01" class="form-control" id="cValue" readonly>
+                            <small class="text-muted">C = Slice Count × Slice Thickness</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Calculate Volume</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="exportPDF()">Export to PDF</button>
+                        </div>
+                    </form>
+
+                    <div class="alert alert-success mt-4 d-none" id="resultBox">
+                        <strong>Volume:</strong> <span id="resultValue"></span> cm³
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Table -->
+            <div class="card shadow mt-4">
+                <div class="card-body">
+                    <h5 class="mb-3">Last 5 Calculations</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>A</th>
+                                    <th>B</th>
+                                    <th>C</th>
+                                    <th>Volume</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("calculatorForm");
+    const resultBox = document.getElementById("resultBox");
+    const resultValue = document.getElementById("resultValue");
+    const historyTable = document.getElementById("historyTable");
+
+    const sliceCount = document.getElementById("sliceCount");
+    const sliceThickness = document.getElementById("sliceThickness");
+    const cValue = document.getElementById("cValue");
+
+    let history = [];
+    let lastCalculation = {};
+
+    function calculateC() {
+        const slices = parseFloat(sliceCount.value) || 0;
+        const thickness = parseFloat(sliceThickness.value) || 0;
+        cValue.value = (slices * thickness).toFixed(2);
+    }
+
+    sliceCount.addEventListener("input", calculateC);
+    sliceThickness.addEventListener("input", calculateC);
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const A = parseFloat(document.getElementById("aValue").value);
+        const B = parseFloat(document.getElementById("bValue").value);
+        const C = parseFloat(cValue.value);
+
+        if (!A || !B || !C) {
+            alert("Please enter valid values.");
+            return;
+        }
+
+        const volume = (A * B * C) / 2;
+
+        resultValue.textContent = volume.toFixed(2);
+        resultBox.classList.remove("d-none");
+
+        lastCalculation = {
+            A, B, C,
+            slices: sliceCount.value,
+            thickness: sliceThickness.value,
+            volume: volume.toFixed(2),
+            date: new Date().toLocaleString()
+        };
+
+        addToHistory(A, B, C, volume.toFixed(2));
+    });
+
+    function addToHistory(A, B, C, volume) {
+        history.unshift({ A, B, C, volume });
+        if (history.length > 5) history.pop();
+        renderTable();
+    }
+
+    function renderTable() {
+        historyTable.innerHTML = "";
+        history.forEach(entry => {
+            historyTable.innerHTML += `
+                <tr>
+                    <td>${entry.A}</td>
+                    <td>${entry.B}</td>
+                    <td>${entry.C}</td>
+                    <td>${entry.volume}</td>
+                </tr>
+            `;
+        });
+    }
+
+    function exportPDF() {
+        if (!lastCalculation.volume) {
+            alert("Please calculate volume first.");
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(16);
+        doc.text("MINUTE: ABC/2 Hematoma Volume Report", 20, 20);
+
+        doc.setFontSize(12);
+        doc.text(`Date: ${lastCalculation.date}`, 20, 35);
+        doc.text(`A (Length): ${lastCalculation.A} cm`, 20, 45);
+        doc.text(`B (Width): ${lastCalculation.B} cm`, 20, 55);
+        doc.text(`Slices: ${lastCalculation.slices}`, 20, 65);
+        doc.text(`Slice Thickness: ${lastCalculation.thickness} cm`, 20, 75);
+        doc.text(`C (Height): ${lastCalculation.C} cm`, 20, 85);
+        doc.text(`Volume (ABC/2): ${lastCalculation.volume} cm³`, 20, 100);
+
+        doc.save("MINUTE_hematoma_volume_report.pdf");
+    }
+</script>
+
+</body>
+</html>
