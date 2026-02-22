@@ -1,0 +1,85 @@
+/* ===============================
+   Apple-Inspired Professional UI
+   =============================== */
+
+body {
+    background-color: #f5f5f7;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                 "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1d1d1f;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+}
+
+/* Title */
+h3 {
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+/* Inputs */
+.form-control {
+    border-radius: 12px;
+    border: 1px solid #d2d2d7;
+    padding: 10px 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #0071e3;
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+}
+
+/* Primary Button */
+.btn-primary {
+    background-color: #0071e3;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    padding: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #005bb5;
+}
+
+/* Secondary Button */
+.btn-outline-secondary {
+    border-radius: 12px;
+}
+
+/* Result Box */
+.alert-success {
+    background-color: #f0f8ff;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.1rem;
+}
+
+/* Table Styling */
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: #f5f5f7;
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+/* Subtle Section Spacing */
+.container {
+    max-width: 800px;
+}
