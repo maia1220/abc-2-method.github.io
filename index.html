@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <title>ABC/2 Hematoma Volume Calculator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="ABC/2 Calculator">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="minute-logo.jpg">
+    <link rel="apple-touch-icon" sizes="180x180" href="minute-logo.jpg">
+    <link rel="manifest" href="manifest.json">
+
     <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 
 <body class="bg-light">
@@ -27,22 +36,36 @@
 
                         <div class="mb-3">
                             <label class="form-label">A (Length: Measure longest axis in cm)</label>
-                            <input type="number" step="0.01" class="form-control" id="aValue" required>
+                            <input type="number" step="0.01" min="0.1" max="20"
+                                class="form-control" id="aValue" required>
+                            <div class="invalid-feedback">
+                                    Please enter a valid length between 0.1–20 cm.
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">B (Width: Measure longest axis at 90° to A in cm)</label>
-                            <input type="number" step="0.01" class="form-control" id="bValue" required>
+                            <input type="number" step="0.01" min="0.1" max="20" class="form-control" id="bValue" required>
+                            <div class="invalid-feedback">
+                                    Please enter a valid width between 0.1–20 cm.
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Number of Slices with Hematoma Present</label>
-                            <input type="number" class="form-control" id="sliceCount">
+                            <input type="number" min="1" max="50" class="form-control" id="sliceCount" required>
+                            <div class="invalid-feedback">
+                                Enter a slice count between 1–50.
+                            </div>  
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Slice Thickness (cm)</label>
-                            <input type="number" step="0.01" class="form-control" id="sliceThickness" value="0.5">
+                            <input type="number" step="0.1" min="0.1" max="2"
+                                class="form-control" id="sliceThickness" value="0.5" required>
+                            <div class="invalid-feedback">
+                                    Slice thickness must be between 0.1–2 cm.
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -60,27 +83,43 @@
                     <div class="alert alert-success mt-4 d-none" id="resultBox">
                         <strong>Volume:</strong> <span id="resultValue"></span> cm³
                     </div>
+                    <div class="alert alert-warning mt-3 d-none" id="warningBox">
+                        ⚠️ Calculated volume exceeds 60 cm³. 
+                        Please verify measurements and correlate clinically.
+                    </div>
                 </div>
             </div>
-            <div class="text-center mt-5 mb-4">
-                <h5 class="fw-semibold mb-2">
-                Designed for the 
-                <a href="https://nihstrokenet.org/trials/minute/home"
-                    target="_blank"
-                    class="minute-link">
-                    MINUTE Trial
-                </a>
-                </h5>
-
-                <p class="text-muted mb-3">
-                    Clinical reference for ABC/2 method calculation.
-                </p>
-
-                <a href="https://radiopaedia.org/articles/abc2?lang=us"
-                    target="_blank"
-                    class="btn btn-outline-primary rounded-pill px-4">
-                    View ABC/2 Reference
-                </a>
+            <div class="container mt-4">
+                <div class="accordion" id="aboutAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="aboutHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aboutCollapse" aria-expanded="false" aria-controls="aboutCollapse">
+                                About the Tool
+                            </button>
+                        </h2>
+                        <div id="aboutCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                            <div class="accordion-body">
+                                <p>This is a web-based ABC/2 Hematoma Volume Calculator designed for clinical research and educational purposes.</p>
+                                <ul>
+                                    <li>Calculates hematoma volume using the ABC/2 method.</li>
+                                    <li>Automatically computes C (height) from slice count × slice thickness.</li>
+                                    <li>Tracks the last 5 calculations for reference.</li>
+                                    <li>Generates a PDF report for documentation.</li>
+                                    <li>Designed for the MINUTE Trial: <a href="https://nihstrokenet.org/trials/minute/home" target="_blank">NIH StrokeNet MINUTE</a></li>
+                                </ul>
+                                <p class="text-muted mb-3">
+                                    Clinical reference for ABC/2 method calculation.
+                                </p>
+                                <a href="https://radiopaedia.org/articles/abc2?lang=us"
+                                    target="_blank"
+                                    class="btn btn-outline-primary rounded-pill px-4">
+                                    View ABC/2 Reference
+                                </a>
+                                <p class="mt-3"><strong>Disclaimer:</strong> This tool is intended for research and educational use. Clinical decisions should follow institutional protocols and professional medical judgment.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- History Table -->
             <div class="card shadow mt-4">
@@ -108,7 +147,7 @@
 <footer class="text-center mt-5 mb-4">
     <div class="footer-wrapper">
         <p class="footer-text mb-0" onclick="copyEmail()">
-            Built by Ally Qi © 2026 | All rights reserved.
+            🛠 Built by Ally Qi © 2026 | v1.0.0
         </p>
         <div class="email-tooltip-box" id="emailTooltip">
             mcally1220@gmail.com
@@ -120,110 +159,157 @@
 </footer>
 
 <script>
-    const form = document.getElementById("calculatorForm");
-    const resultBox = document.getElementById("resultBox");
-    const resultValue = document.getElementById("resultValue");
-    const historyTable = document.getElementById("historyTable");
+const form = document.getElementById("calculatorForm");
+const resultBox = document.getElementById("resultBox");
+const resultValue = document.getElementById("resultValue");
+const historyTable = document.getElementById("historyTable");
+const warningBox = document.getElementById("warningBox");
 
-    const sliceCount = document.getElementById("sliceCount");
-    const sliceThickness = document.getElementById("sliceThickness");
-    const cValue = document.getElementById("cValue");
+const sliceCount = document.getElementById("sliceCount");
+const sliceThickness = document.getElementById("sliceThickness");
+const cValue = document.getElementById("cValue");
 
-    let history = [];
-    let lastCalculation = {};
+let history = [];
+let lastCalculation = {};
 
-    function calculateC() {
-        const slices = parseFloat(sliceCount.value) || 0;
-        const thickness = parseFloat(sliceThickness.value) || 0;
+// ===============================
+// Auto-calculate C
+// ===============================
+function calculateC() {
+    const slices = parseFloat(sliceCount.value);
+    const thickness = parseFloat(sliceThickness.value);
+
+    if (!isNaN(slices) && !isNaN(thickness)) {
         cValue.value = (slices * thickness).toFixed(2);
+    } else {
+        cValue.value = "";
+    }
+}
+
+sliceCount.addEventListener("input", calculateC);
+sliceThickness.addEventListener("input", calculateC);
+
+// ===============================
+// Form Submission with Validation
+// ===============================
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    // Trigger Bootstrap validation
+    if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
     }
 
-    sliceCount.addEventListener("input", calculateC);
-    sliceThickness.addEventListener("input", calculateC);
+    const A = parseFloat(document.getElementById("aValue").value);
+    const B = parseFloat(document.getElementById("bValue").value);
+    const C = parseFloat(cValue.value);
 
-    form.addEventListener("submit", function(e) {
-        e.preventDefault();
+    if (isNaN(A) || isNaN(B) || isNaN(C) || C <= 0) {
+        form.classList.add("was-validated");
+        return;
+    }
 
-        const A = parseFloat(document.getElementById("aValue").value);
-        const B = parseFloat(document.getElementById("bValue").value);
-        const C = parseFloat(cValue.value);
+    const volume = (A * B * C) / 2;
 
-        if (!A || !B || !C) {
-            alert("Please enter valid values.");
-            return;
-        }
+    resultValue.textContent = volume.toFixed(2);
+    resultBox.classList.remove("d-none");
 
-        const volume = (A * B * C) / 2;
+    // ===============================
+    // Clinical Warning Threshold
+    // ===============================
+    if (volume > 60) {
+        warningBox.classList.remove("d-none");
+    } else {
+        warningBox.classList.add("d-none");
+    }
 
-        resultValue.textContent = volume.toFixed(2);
-        resultBox.classList.remove("d-none");
+    lastCalculation = {
+        A, B, C,
+        slices: sliceCount.value,
+        thickness: sliceThickness.value,
+        volume: volume.toFixed(2),
+        date: new Date().toLocaleString()
+    };
 
-        lastCalculation = {
-            A, B, C,
-            slices: sliceCount.value,
-            thickness: sliceThickness.value,
-            volume: volume.toFixed(2),
-            date: new Date().toLocaleString()
-        };
+    addToHistory(A, B, C, volume.toFixed(2));
+});
 
-        addToHistory(A, B, C, volume.toFixed(2));
+// ===============================
+// History Table
+// ===============================
+function addToHistory(A, B, C, volume) {
+    history.unshift({ A, B, C, volume });
+    if (history.length > 5) history.pop();
+    renderTable();
+}
+
+function renderTable() {
+    historyTable.innerHTML = "";
+    history.forEach(entry => {
+        historyTable.innerHTML += `
+            <tr>
+                <td>${entry.A}</td>
+                <td>${entry.B}</td>
+                <td>${entry.C}</td>
+                <td>${entry.volume}</td>
+            </tr>
+        `;
     });
+}
 
-    function addToHistory(A, B, C, volume) {
-        history.unshift({ A, B, C, volume });
-        if (history.length > 5) history.pop();
-        renderTable();
+// ===============================
+// PDF Export
+// ===============================
+function exportPDF() {
+    if (!lastCalculation.volume) {
+        return;
     }
 
-    function renderTable() {
-        historyTable.innerHTML = "";
-        history.forEach(entry => {
-            historyTable.innerHTML += `
-                <tr>
-                    <td>${entry.A}</td>
-                    <td>${entry.B}</td>
-                    <td>${entry.C}</td>
-                    <td>${entry.volume}</td>
-                </tr>
-            `;
-        });
-    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-    function exportPDF() {
-        if (!lastCalculation.volume) {
-            alert("Please calculate volume first.");
-            return;
-        }
+    doc.setFontSize(16);
+    doc.text("MINUTE: ABC/2 Hematoma Volume Report", 20, 20);
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+    doc.setFontSize(12);
+    doc.text(`Date: ${lastCalculation.date}`, 20, 35);
+    doc.text(`A (Length): ${lastCalculation.A} cm`, 20, 45);
+    doc.text(`B (Width): ${lastCalculation.B} cm`, 20, 55);
+    doc.text(`Slices: ${lastCalculation.slices}`, 20, 65);
+    doc.text(`Slice Thickness: ${lastCalculation.thickness} cm`, 20, 75);
+    doc.text(`C (Height): ${lastCalculation.C} cm`, 20, 85);
+    doc.text(`Volume (ABC/2): ${lastCalculation.volume} cm³`, 20, 100);
 
-        doc.setFontSize(16);
-        doc.text("MINUTE: ABC/2 Hematoma Volume Report", 20, 20);
+    doc.save("MINUTE_hematoma_volume_report.pdf");
+}
 
-        doc.setFontSize(12);
-        doc.text(`Date: ${lastCalculation.date}`, 20, 35);
-        doc.text(`A (Length): ${lastCalculation.A} cm`, 20, 45);
-        doc.text(`B (Width): ${lastCalculation.B} cm`, 20, 55);
-        doc.text(`Slices: ${lastCalculation.slices}`, 20, 65);
-        doc.text(`Slice Thickness: ${lastCalculation.thickness} cm`, 20, 75);
-        doc.text(`C (Height): ${lastCalculation.C} cm`, 20, 85);
-        doc.text(`Volume (ABC/2): ${lastCalculation.volume} cm³`, 20, 100);
+// ===============================
+// Footer Email Copy
+// ===============================
+function copyEmail() {
+    const email = "mcally1220@gmail.com";
+    navigator.clipboard.writeText(email);
 
-        doc.save("MINUTE_hematoma_volume_report.pdf");
-    }
-    function copyEmail() {
-        const email = "mcally1220@gmail.com";
-        navigator.clipboard.writeText(email);
+    const confirmation = document.getElementById("copyConfirm");
+    confirmation.style.opacity = "1";
 
-        const confirmation = document.getElementById("copyConfirm");
-        confirmation.style.opacity = "1";
+    setTimeout(() => {
+        confirmation.style.opacity = "0";
+    }, 1500);
+}
 
-        setTimeout(() => {
-            confirmation.style.opacity = "0";
-        }, 1500);
-    }
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js")
+      .then(reg => console.log("Service Worker registered:", reg))
+      .catch(err => console.error("Service Worker registration failed:", err));
+  });
+}
+
 </script>
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

@@ -1,0 +1,21 @@
+{
+  "name": "ABC/2 Hematoma Volume Calculator",
+  "short_name": "ABC2 Calc",
+  "description": "Web-based ABC/2 Hematoma Volume Calculator for clinical research and MINUTE Trial.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1d1d1f",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
